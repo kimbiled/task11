@@ -1,0 +1,25 @@
+Создать продукт
+curl -X POST http://localhost:3000/api/products \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Keyboard","price":120,"category":"Electronics"}'
+
+Получить все
+curl http://localhost:3000/api/products
+
+Получить по id
+curl http://localhost:3000/api/products/<ID>
+
+curl http://localhost:3000/api/products/1
+
+
+Фильтр по категории
+curl "http://localhost:3000/api/products?category=Electronics"
+
+Цена >= 50 и сортировка по цене
+curl "http://localhost:3000/api/products?minPrice=50&sort=price"
+
+Только name и price
+curl "http://localhost:3000/api/products?fields=name,price"
+
+Комбо (всё вместе)
+curl "http://localhost:3000/api/products?category=Electronics&minPrice=50&sort=price&fields=name,price"
