@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Practice Task 9–11 API Tester</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <h1>Practice Task 9–11 API Tester</h1>
+    <p class="muted">
+      Работает и локально, и на Vercel. Все запросы идут на текущий домен.
+      Коллекция: <b>shop.products</b>
+    </p>
+
+    <div class="card links">
+      <h2>Быстрые ссылки</h2>
+      <a href="/api/products" target="_blank">GET /api/products</a>
+      <a href="/api/products/1" target="_blank">GET /api/products/1</a>
+    </div>
+
+    <div class="grid" style="margin-top: 16px">
+      <!-- GET /api/products with query params -->
+      <div class="card">
+        <h2>GET /api/products (Task 10: filter/sort/fields)</h2>
+
+        <label>category (например Electronics)</label>
+        <input id="qCategory" placeholder="Electronics" />
+
+        <label>minPrice (например 50)</label>
+        <input id="qMinPrice" placeholder="50" />
+
+        <label>sort (оставь пустым или поставь price)</label>
+        <select id="qSort">
+          <option value="">(none)</option>
+          <option value="price">price (asc)</option>
+        </select>
+
+        <label>fields (например name,price)</label>
+        <input id="qFields" placeholder="name,price" />
+
+        <div class="row" style="margin-top: 12px">
+          <button class="auto" onclick="getProducts()">Run GET</button>
+          <button class="secondary auto" onclick="openProductsUrl()">
+            Open URL
+          </button>
+        </div>
+      </div>
+
+      <!-- GET by id -->
+      <div class="card">
+        <h2>GET /api/products/:id</h2>
+        <label>Product ID (ObjectId)</label>
+        <input id="getId" placeholder="656a... (ObjectId)" />
+        <div class="row" style="margin-top: 12px">
+          <button class="auto" onclick="getById()">Run GET by ID</button>
+          <button class="secondary auto" onclick="openByIdUrl()">
+            Open URL
+          </button>
+        </div>
+
+        <p class="muted" style="margin-top: 10px">
+          Для проверки 400: введи <code>1</code><br />
+          Для 404: введи валидный ObjectId которого нет.
+        </p>
+      </div>
+
+      <!-- POST -->
+      <div class="card">
+        <h2>POST /api/products</h2>
+        <label>Body JSON</label>
+        <textarea id="postBody">
+{
+  "name": "Keyboard",
+  "price": 120,
+  "category": "Electronics"
+}
+        </textarea>
+        <div class="row" style="margin-top: 12px">
+          <button class="auto" onclick="postProduct()">Run POST</button>
+          <button class="secondary auto" onclick="fillPostSample()">
+            Sample
+          </button>
+        </div>
+      </div>
+
+      <!-- PUT -->
+      <div class="card">
+        <h2>PUT /api/products/:id</h2>
+
+        <label>Product ID (ObjectId)</label>
+        <input id="putId" placeholder="656a... (ObjectId)" />
+
+        <label>Body JSON</label>
+        <textarea id="putBody">
+{
+  "name": "Keyboard Pro",
+  "price": 150,
+  "category": "Electronics"
+}
+        </textarea>
+
+        <div class="row" style="margin-top: 12px">
+          <button class="auto" onclick="putProduct()">Run PUT</button>
+          <button class="secondary auto" onclick="fillPutSample()">
+            Sample
+          </button>
+        </div>
+      </div>
+
+      <!-- DELETE -->
+      <div class="card">
+        <h2>DELETE /api/products/:id</h2>
+        <label>Product ID (ObjectId)</label>
+        <input id="deleteId" placeholder="656a... (ObjectId)" />
+        <div class="row" style="margin-top: 12px">
+          <button class="auto" onclick="deleteProduct()">Run DELETE</button>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div class="card">
+        <h2>Ответ</h2>
+        <div class="row" style="margin-bottom: 10px">
+          <div class="status" id="statusLine">Status: —</div>
+          <button class="secondary auto" onclick="clearOutput()">Clear</button>
+        </div>
+        <pre id="output">{}</pre>
+
+        <p class="muted" style="margin-top: 10px">
+          Подсказка: после POST скопируй <code>_id</code> и вставь в
+          GET/PUT/DELETE.
+        </p>
+      </div>
+    </div>
+
+    <script src="script.js" />
+  </body>
+</html>
