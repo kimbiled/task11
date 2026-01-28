@@ -12,6 +12,10 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+function idFilter(id) {
+  return ObjectId.isValid(id) ? { $in: [new ObjectId(id), id] } : id;
+}
+
 app.get('/api/products', async (req, res) => {
   try {
     const productsCollection = await getProductsCollection();
@@ -84,7 +88,7 @@ app.get('/api/products/:id', async (req, res) => {
 
   try {
     const productsCollection = await getProductsCollection();
-    const product = await productsCollection.findOne({ _id: new ObjectId(id) });
+    const product = await productsCollection.findOne({ _id: idFilter(id) });
 
     if (!product) return res.status(404).json({ error: 'Product not found' });
     res.json(product);
@@ -144,7 +148,7 @@ app.put('/api/products/:id', async (req, res) => {
   try {
     const productsCollection = await getProductsCollection();
     const result = await productsCollection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      { _id: idFilter(id) },
       { $set: { name: name.trim(), price, category: category.trim() } },
       { returnDocument: 'after' },
     );
@@ -168,7 +172,7 @@ app.delete('/api/products/:id', async (req, res) => {
   try {
     const productsCollection = await getProductsCollection();
     const result = await productsCollection.deleteOne({
-      _id: new ObjectId(id),
+      _id: idFilter(id),
     });
 
     if (result.deletedCount === 0) {
@@ -208,7 +212,7 @@ app.get('/api/items/:id', async (req, res) => {
 
   try {
     const itemsCollection = await getItemsCollection();
-    const item = await itemsCollection.findOne({ _id: new ObjectId(id) });
+    const item = await itemsCollection.findOne({ _id: idFilter(id) });
 
     if (!item) return res.status(404).json({ error: 'Item not found' });
     res.status(200).json(item);
@@ -257,7 +261,7 @@ app.put('/api/items/:id', async (req, res) => {
   try {
     const itemsCollection = await getItemsCollection();
     const result = await itemsCollection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      { _id: idFilter(id) },
       { $set: { name: name.trim(), qty } },
       { returnDocument: 'after' },
     );
@@ -302,7 +306,7 @@ app.patch('/api/items/:id', async (req, res) => {
   try {
     const itemsCollection = await getItemsCollection();
     const result = await itemsCollection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      { _id: idFilter(id) },
       { $set: updates },
       { returnDocument: 'after' },
     );
@@ -323,7 +327,7 @@ app.delete('/api/items/:id', async (req, res) => {
 
   try {
     const itemsCollection = await getItemsCollection();
-    const result = await itemsCollection.deleteOne({ _id: new ObjectId(id) });
+    const result = await itemsCollection.deleteOne({ _id: idFilter(id) });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: 'Item not found' });
