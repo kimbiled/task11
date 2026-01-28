@@ -182,6 +182,13 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
+app.get('/version', (req, res) => {
+  res.json({
+    version: '1.1',
+    updatedAt: '2026-01-24',
+  });
+});
+
 app.use((req, res) => {
   res.status(404).json({ error: 'API endpoint not found' });
 });
