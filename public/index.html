@@ -130,6 +130,77 @@
       </div>
     </div>
 
+    <div class="card">
+      <h2>Items (Task 13)</h2>
+
+      <h3>GET /api/items</h3>
+      <div class="row">
+        <button class="auto" onclick="getItems()">Run GET</button>
+        <button class="secondary auto" onclick="openItemsUrl()">
+          Open URL
+        </button>
+      </div>
+
+      <hr />
+
+      <h3>GET /api/items/:id</h3>
+      <input id="itemGetId" placeholder="ObjectId" />
+      <div class="row">
+        <button class="auto" onclick="getItemById()">Run GET by ID</button>
+      </div>
+
+      <hr />
+
+      <h3>POST /api/items</h3>
+      <textarea id="itemPostBody">
+{
+  "name": "Pen",
+  "qty": 10
+}
+  </textarea
+      >
+      <div class="row">
+        <button class="auto" onclick="postItem()">Run POST</button>
+      </div>
+
+      <hr />
+
+      <h3>PUT /api/items/:id</h3>
+      <input id="itemPutId" placeholder="ObjectId" />
+      <textarea id="itemPutBody">
+{
+  "name": "Pen Updated",
+  "qty": 20
+}
+  </textarea
+      >
+      <div class="row">
+        <button class="auto" onclick="putItem()">Run PUT</button>
+      </div>
+
+      <hr />
+
+      <h3>PATCH /api/items/:id</h3>
+      <input id="itemPatchId" placeholder="ObjectId" />
+      <textarea id="itemPatchBody">
+{
+  "qty": 99
+}
+  </textarea
+      >
+      <div class="row">
+        <button class="auto" onclick="patchItem()">Run PATCH</button>
+      </div>
+
+      <hr />
+
+      <h3>DELETE /api/items/:id</h3>
+      <input id="itemDeleteId" placeholder="ObjectId" />
+      <div class="row">
+        <button class="auto" onclick="deleteItem()">Run DELETE</button>
+      </div>
+    </div>
+
     <script src="/script.js" defer></script>
   </body>
 </html>

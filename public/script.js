@@ -119,3 +119,65 @@ async function deleteProduct() {
   if (!id) return setOutput(0, { error: 'Введите id для DELETE' });
   await request('DELETE', `/api/products/${encodeURIComponent(id)}`);
 }
+
+function openItemsUrl() {
+  window.open('/api/items', '_blank');
+}
+
+async function getItems() {
+  await request('GET', '/api/items');
+}
+
+async function getItemById() {
+  const id = document.getElementById('itemGetId').value.trim();
+  if (!id) return setOutput(0, { error: 'Введите item id' });
+  await request('GET', `/api/items/${encodeURIComponent(id)}`);
+}
+
+async function postItem() {
+  const raw = document.getElementById('itemPostBody').value;
+  let body;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return setOutput(0, { error: 'POST body is not valid JSON' });
+  }
+  await request('POST', '/api/items', body);
+}
+
+async function putItem() {
+  const id = document.getElementById('itemPutId').value.trim();
+  if (!id) return setOutput(0, { error: 'Введите id для PUT' });
+
+  const raw = document.getElementById('itemPutBody').value;
+  let body;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return setOutput(0, { error: 'PUT body is not valid JSON' });
+  }
+
+  await request('PUT', `/api/items/${encodeURIComponent(id)}`, body);
+}
+
+async function patchItem() {
+  const id = document.getElementById('itemPatchId').value.trim();
+  if (!id) return setOutput(0, { error: 'Введите id для PATCH' });
+
+  const raw = document.getElementById('itemPatchBody').value;
+  let body;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return setOutput(0, { error: 'PATCH body is not valid JSON' });
+  }
+
+  await request('PATCH', `/api/items/${encodeURIComponent(id)}`, body);
+}
+
+async function deleteItem() {
+  const id = document.getElementById('itemDeleteId').value.trim();
+  if (!id) return setOutput(0, { error: 'Введите id для DELETE' });
+
+  await request('DELETE', `/api/items/${encodeURIComponent(id)}`);
+}

@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const { ObjectId } = require('mongodb');
-const { getProductsCollection } = require('../lib/mongo');
+const { getProductsCollection, getItemsCollection } = require('../lib/mongo');
 
 const app = express();
 
@@ -187,6 +187,152 @@ app.get('/api/version', (req, res) => {
     version: '1.1',
     updatedAt: '2026-01-24',
   });
+});
+
+app.get('/api/items', async (req, res) => {
+  try {
+    const itemsCollection = await getItemsCollection();
+    const items = await itemsCollection.find({}).toArray();
+    res.status(200).json({ count: items.length, items });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/items/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid item id' });
+  }
+
+  try {
+    const itemsCollection = await getItemsCollection();
+    const item = await itemsCollection.findOne({ _id: new ObjectId(id) });
+
+    if (!item) return res.status(404).json({ error: 'Item not found' });
+    res.status(200).json(item);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/items', async (req, res) => {
+  const { name, qty } = req.body ?? {};
+
+  if (typeof name !== 'string' || name.trim() === '') {
+    return res.status(400).json({ error: 'Missing or invalid field: name' });
+  }
+  if (typeof qty !== 'number' || !Number.isFinite(qty)) {
+    return res.status(400).json({ error: 'Missing or invalid field: qty' });
+  }
+
+  try {
+    const itemsCollection = await getItemsCollection();
+    const newItem = { name: name.trim(), qty };
+    const result = await itemsCollection.insertOne(newItem);
+
+    res.status(201).json({ _id: result.insertedId, ...newItem });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.put('/api/items/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid item id' });
+  }
+
+  const { name, qty } = req.body ?? {};
+  if (typeof name !== 'string' || name.trim() === '') {
+    return res.status(400).json({ error: 'Missing or invalid field: name' });
+  }
+  if (typeof qty !== 'number' || !Number.isFinite(qty)) {
+    return res.status(400).json({ error: 'Missing or invalid field: qty' });
+  }
+
+  try {
+    const itemsCollection = await getItemsCollection();
+    const result = await itemsCollection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: { name: name.trim(), qty } },
+      { returnDocument: 'after' },
+    );
+
+    if (!result.value) return res.status(404).json({ error: 'Item not found' });
+    res.status(200).json(result.value);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.patch('/api/items/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid item id' });
+  }
+
+  const { name, qty } = req.body ?? {};
+  const updates = {};
+
+  if (name !== undefined) {
+    if (typeof name !== 'string' || name.trim() === '') {
+      return res.status(400).json({ error: 'Invalid field: name' });
+    }
+    updates.name = name.trim();
+  }
+
+  if (qty !== undefined) {
+    if (typeof qty !== 'number' || !Number.isFinite(qty)) {
+      return res.status(400).json({ error: 'Invalid field: qty' });
+    }
+    updates.qty = qty;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return res
+      .status(400)
+      .json({ error: 'No valid fields provided for update' });
+  }
+
+  try {
+    const itemsCollection = await getItemsCollection();
+    const result = await itemsCollection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: updates },
+      { returnDocument: 'after' },
+    );
+
+    if (!result.value) return res.status(404).json({ error: 'Item not found' });
+    res.status(200).json(result.value);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.delete('/api/items/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid item id' });
+  }
+
+  try {
+    const itemsCollection = await getItemsCollection();
+    const result = await itemsCollection.deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.use((req, res) => {

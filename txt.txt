@@ -23,3 +23,17 @@ curl "http://localhost:3000/api/products?fields=name,price"
 
 Комбо (всё вместе)
 curl "http://localhost:3000/api/products?category=Electronics&minPrice=50&sort=price&fields=name,price"
+
+curl -X POST http://localhost:3000/api/items \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Pen","qty":10}'
+
+curl -X PATCH http://localhost:3000/api/items/<ID> \
+  -H "Content-Type: application/json" \
+  -d '{"qty":99}'
+
+curl -X PUT http://localhost:3000/api/items/<ID> \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Pen Updated","qty":1}'
+
+curl -i -X DELETE http://localhost:3000/api/items/<ID>
