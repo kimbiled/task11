@@ -4,6 +4,21 @@ const { ObjectId } = require('mongodb');
 const { getProductsCollection, getItemsCollection } = require('../lib/mongo');
 
 const app = express();
+const API_KEY = process.env.API_KEY || 'dev-key';
+
+function requireApiKey(req, res, next) {
+  const key = req.header('x-api-key');
+
+  if (!key) {
+    return res.status(401).json({ error: 'Unauthorized: API key required' });
+  }
+
+  if (key !== API_KEY) {
+    return res.status(403).json({ error: 'Forbidden: invalid API key' });
+  }
+
+  next();
+}
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -98,7 +113,7 @@ app.get('/api/products/:id', async (req, res) => {
   }
 });
 
-app.post('/api/products', async (req, res) => {
+app.post('/api/products', requireApiKey, async (req, res) => {
   const { name, price, category } = req.body ?? {};
 
   if (typeof name !== 'string' || name.trim() === '') {
@@ -125,7 +140,7 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
-app.put('/api/products/:id', async (req, res) => {
+app.put('/api/products/:id', requireApiKey, async (req, res) => {
   const { id } = req.params;
 
   if (!ObjectId.isValid(id)) {
@@ -162,7 +177,7 @@ app.put('/api/products/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/products/:id', async (req, res) => {
+app.delete('/api/products/:id', requireApiKey, async (req, res) => {
   const { id } = req.params;
 
   if (!ObjectId.isValid(id)) {
@@ -222,7 +237,7 @@ app.get('/api/items/:id', async (req, res) => {
   }
 });
 
-app.post('/api/items', async (req, res) => {
+app.post('/api/items', requireApiKey, async (req, res) => {
   const { name, qty } = req.body ?? {};
 
   if (typeof name !== 'string' || name.trim() === '') {
@@ -244,7 +259,7 @@ app.post('/api/items', async (req, res) => {
   }
 });
 
-app.put('/api/items/:id', async (req, res) => {
+app.put('/api/items/:id', requireApiKey, async (req, res) => {
   const { id } = req.params;
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({ error: 'Invalid item id' });
@@ -274,7 +289,7 @@ app.put('/api/items/:id', async (req, res) => {
   }
 });
 
-app.patch('/api/items/:id', async (req, res) => {
+app.patch('/api/items/:id', requireApiKey, async (req, res) => {
   const { id } = req.params;
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({ error: 'Invalid item id' });
@@ -319,7 +334,7 @@ app.patch('/api/items/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/items/:id', async (req, res) => {
+app.delete('/api/items/:id', requireApiKey, async (req, res) => {
   const { id } = req.params;
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({ error: 'Invalid item id' });
